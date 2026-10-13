@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123b75">
+<title>TimeMark Studio - Template 2</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800;900&family=Roboto+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+    --accent: #eab308;
+    --page: #000000;
+    --panel: rgba(10, 15, 27, 0.88);
+    --border: rgba(148, 163, 184, 0.20);
+    --blue-top: #123b75;
+    --blue-middle: #0b1b35;
+}
+
+html {
+    min-height: 100%;
+    background: #000000;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+    background-image: linear-gradient(
+        to bottom,
+        #123b75 0%,
+        #0b2850 18%,
+        #0b1b35 38%,
+        #050912 68%,
+        #000000 100%
+    );
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100vh;
+}
+
+input, select, button { font: inherit; }
+
+input[type="range"] {
+    display: block;
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.field {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 10px 11px;
+    background: rgba(4, 9, 19, 0.78);
+    color: #ffffff;
+    border: 1px solid #334155;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color .2s, background .2s;
+}
+
+.field:focus {
+    border-color: var(--accent);
+    background: rgba(5, 12, 26, 0.96);
+}
+
+.field option {
+    background: #101827;
+    color: #ffffff;
+}
+
+.section {
+    padding: 15px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(8px);
+}
+
+.section-title {
+    margin-bottom: 13px;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.label {
+    display: block;
+    margin-bottom: 6px;
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+.control-panel {
+    max-height: 82vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #475569 rgba(0, 0, 0, 0.15);
+}
+
+#photoCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 13px;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    color: #fde047;
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 11px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: .2s;
+}
+
+.back-button:hover {
+    background: var(--accent);
+    color: #000000;
+}
+
+button { cursor: pointer; }
+button:disabled { opacity: .4; cursor: not-allowed; }
+
+.preview-shell {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+#previewArea {
+    width: 100%;
+    min-height: 300px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.42);
+}
+
+#placeholderText { padding: 25px 10px; }
+.status-text { overflow-wrap: anywhere; }
+
+.panel-card {
+    background: rgba(5, 10, 20, 0.70);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+
+.header-inner { flex-wrap: nowrap; }
+
+@media (min-width: 768px) {
+    #photoCanvas { max-height: 75vh; }
+}
+
+@media (max-width: 767px) {
+    body {
+        background-size: 100% 100vh;
+        background-attachment: scroll;
+    }
+
+    .control-panel {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    #previewArea {
+        min-height: 220px;
+        padding: 7px;
+    }
+
+    #photoCanvas { max-height: none; }
+
+    .back-button {
+        padding: 9px 10px;
+        font-size: 10px;
+    }
+
+    .section { padding: 13px; }
+}
+
+@media (max-width: 390px) {
+    .header-inner { flex-wrap: wrap; }
+    .back-button { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="border-b border-white/10 bg-black/25">
+    <div class="header-inner max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 flex-shrink-0 bg-yellow-500 text-black flex items-center justify-center font-black text-xl rounded-sm">
+                T
+            </div>
+            <div class="min-w-0">
+                <h1 class="font-black text-lg sm:text-xl tracking-tight">
+                    TIMEMARK <span class="text-yellow-400">STUDIO</span>
+                </h1>
+                <p class="text-[10px] tracking-[2px] text-slate-300">
+                    PHOTO STAMP EDITOR
+                </p>
+            </div>
+        </div>
+        <a href="./index.html" class="back-button">KEMBALI KE TEMPLATE 1</a>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+    <div class="mb-6 border-l-4 border-yellow-500 pl-4">
+        <h2 class="text-2xl sm:text-3xl font-black">Photo Editor Pro</h2>
+        <p class="text-sm text-slate-300 mt-1">
+            Template 2 atur font Arial, ukuran jam, tanggal, alamat, bentuk kotak, serta posisi elemen.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-[minmax(280px,370px)_minmax(0,1fr)] gap-5">
+
+        <aside class="control-panel space-y-4 pr-1">
+
+            <section class="section">
+                <h3 class="section-title">01 Foto</h3>
+                <label class="label" for="imageInput">Pilih foto dari perangkat</label>
+                <input id="imageInput" type="file" accept="image/*"
+                    class="block w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-3 file:border-0 file:rounded-sm file:bg-yellow-500 file:text-black file:font-bold hover:file:bg-yellow-400">
+                <p class="text-[11px] text-slate-400 mt-2">
+                    Foto asli dipertahankan, stempel digabungkan saat diproses.
+                </p>
+            </section>
+
+            <section class="section">
+                <h3 class="section-title">02 Waktu dan Label</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="label" for="inputBadgeTitle">Teks label kotak</label>
+                        <input class="field" id="inputBadgeTitle" value="Absensi">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="label" for="inputTime">Jam waktu</label>
+                            <input class="field" id="inputTime" value="14:34">
+                        </div>
+                        <div>
+                            <label class="label" for="inputDay">Hari</label>
+                            <input class="field" id="inputDay" value="Jumat">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="label" for="inputDate">Tanggal</label>
+                        <input class="field" id="inputDate" value="03 April 2026">
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h3 class="section-title">03 Lokasi dan Kode</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="label" for="inputLocation1">Alamat baris 1</label>
+                        <input class="field" id="inputLocation1" value="Jalan Raya Desa, Bungko, Kec.">
+                    </div>
+                    <div>
+                        <label class="label" for="inputLocation2">Alamat baris 2</label>
+                        <input class="field" id="inputLocation2" value="Kotamobagu Sel., Kota Kotamobagu,">
+                    </div>
+                    <div>
+                        <label class="label" for="inputLocation3">Alamat baris 3</label>
+                        <input class="field" id="inputLocation3" value="Sulawesi Utara">
+                    </div>
+                    <div>
+                        <label class="label" for="inputCoord">Kode verifikasi bawah</label>
+                        <input class="field" id="inputCoord" value="G6C6GB1GPDUE6K">
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h3 class="section-title">04 Gaya dan Font Teks</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="label" for="logoColor">Warna logo kanan atas</label>
+                        <select class="field" id="logoColor">
+                            <option value="dual">Time kuning emas mark putih</option>
+                            <option value="yellow">Semua kuning emas</option>
+                            <option value="white">Semua putih</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label" for="fontFamilyDate">Font Tanggal & Jam</label>
+                        <select class="field" id="fontFamilyDate">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="Roboto, sans-serif">Roboto</option>
+                            <option value="'Roboto Condensed', sans-serif">Roboto Condensed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label" for="fontFamilyAddress">Font Alamat</label>
+                        <select class="field" id="fontFamilyAddress">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="Roboto, sans-serif">Roboto</option>
+                            <option value="'Roboto Condensed', sans-serif">Roboto Condensed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <label for="fontSizeTime" class="text-slate-300">Ukuran Text Jam</label>
+                            <span id="fontSizeTimeVal">38 px</span>
+                        </div>
+                        <input type="range" id="fontSizeTime" min="20" max="120" step="2" value="38">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <label for="fontSizeDate" class="text-slate-300">Ukuran Text Tanggal</label>
+                            <span id="fontSizeDateVal">20 px</span>
+                        </div>
+                        <input type="range" id="fontSizeDate" min="10" max="80" step="1" value="20">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <label for="fontSizeAddress" class="text-slate-300">Ukuran Text Alamat</label>
+                            <span id="fontSizeAddressVal">18 px</span>
+                        </div>
+                        <input type="range" id="fontSizeAddress" min="10" max="50" step="1" value="18">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <label for="subTextOpacity" class="text-slate-300">Transparansi "Foto 100% akurat"</label>
+                            <span id="subTextOpacityVal">0.25</span>
+                        </div>
+                        <input type="range" id="subTextOpacity" min="0" max="1" step="0.05" value="0.25">
+                    </div>
+                    <label class="flex items-center justify-between gap-3 text-sm pt-1">
+                        <span>Tampilkan logo kanan atas</span>
+                        <input type="checkbox" id="showLogo" checked class="w-4 h-4">
+                    </label>
+                    <label class="flex items-center justify-between gap-3 text-sm">
+                        <span>Tampilkan teks vertikal kanan</span>
+                        <input type="checkbox" id="showSideCode" checked class="w-4 h-4">
+                    </label>
+                    <label class="flex items-center justify-between gap-3 text-sm">
+                        <span>Tampilkan kotak label jam</span>
+                        <input type="checkbox" id="showBadge" checked class="w-4 h-4">
+                    </label>
+                    <label class="flex items-center justify-between gap-3 text-sm">
+                        <span>Tampilkan kode bawah</span>
+                        <input type="checkbox" id="showBottomCode" checked class="w-4 h-4">
+                    </label>
+                    <label class="flex items-center justify-between gap-3 text-sm">
+                        <span>Tampilkan tanggal dan alamat</span>
+                        <input type="checkbox" id="showDetails" checked class="w-4 h-4">
+                    </label>
+                </div>
+            </section>
+
+            <!-- BENTUK DAN UKURAN KOTAK JAM -->
+            <section class="section space-y-4">
+                <h3 class="section-title">05 Bentuk Kotak Absensi</h3>
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="boxRadius" class="text-slate-300">Sudut Bulat Kotak (Radius)</label>
+                        <span id="boxRadiusVal">9 px</span>
+                    </div>
+                    <input type="range" id="boxRadius" min="0" max="30" step="1" value="9">
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="boxPaddingX" class="text-slate-300">Lebar Kotak (Padding X)</label>
+                        <span id="boxPaddingXVal">4 px</span>
+                    </div>
+                    <input type="range" id="boxPaddingX" min="0" max="30" step="1" value="4">
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="boxPaddingY" class="text-slate-300">Tinggi Kotak (Padding Y)</label>
+                        <span id="boxPaddingYVal">2 px</span>
+                    </div>
+                    <input type="range" id="boxPaddingY" min="0" max="25" step="1" value="2">
+                </div>
+            </section>
+
+            <!-- PENGATURAN POSISI DETAIL & PANJANG GARIS -->
+            <section class="section space-y-4">
+                <h3 class="section-title">06 Atur Posisi & Garis</h3>
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetGlobalY" class="text-slate-300 font-bold">Geser Keseluruhan (Atas / Bawah)</label>
+                        <span id="offsetGlobalYVal">115 px</span>
+                    </div>
+                    <input type="range" id="offsetGlobalY" min="-300" max="300" step="5" value="115">
+                </div>
+
+                <hr class="border-slate-800 my-2">
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetXBox" class="text-slate-300">Kotak Jam (Geser X)</label>
+                        <span id="offsetXBoxVal">0 px</span>
+                    </div>
+                    <input type="range" id="offsetXBox" min="-300" max="300" step="5" value="0">
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetYBox" class="text-slate-300">Kotak Jam (Geser Y)</label>
+                        <span id="offsetYBoxVal">-40 px</span>
+                    </div>
+                    <input type="range" id="offsetYBox" min="-300" max="300" step="5" value="-40">
+                </div>
+
+                <hr class="border-slate-800 my-2">
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetYDate" class="text-slate-300">Tanggal & Hari (Geser Y)</label>
+                        <span id="offsetYDateVal">40 px</span>
+                    </div>
+                    <input type="range" id="offsetYDate" min="-200" max="200" step="5" value="40">
+                </div>
+
+                <hr class="border-slate-800 my-2">
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetYAddress" class="text-slate-300">Alamat (Geser Y)</label>
+                        <span id="offsetYAddressVal">-30 px</span>
+                    </div>
+                    <input type="range" id="offsetYAddress" min="-200" max="200" step="5" value="-30">
+                </div>
+
+                <hr class="border-slate-800 my-2">
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetYBottomCode" class="text-slate-300">Kode Bawah (Geser Y)</label>
+                        <span id="offsetYBottomCodeVal">-45 px</span>
+                    </div>
+                    <input type="range" id="offsetYBottomCode" min="-200" max="200" step="5" value="-45">
+                </div>
+
+                <hr class="border-slate-800 my-2">
+
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="offsetXLine" class="text-slate-300">Garis Kuning Emas (Geser X)</label>
+                        <span id="offsetXLineVal">-4 px</span>
+                    </div>
+                    <input type="range" id="offsetXLine" min="-100" max="100" step="2" value="-4">
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <label for="lineLengthOffset" class="text-slate-300 font-bold">Panjang / Pendek Garis Kuning Emas</label>
+                        <span id="lineLengthOffsetVal">-50 px</span>
+                    </div>
+                    <input type="range" id="lineLengthOffset" min="-200" max="300" step="5" value="-50">
+                </div>
+
+                <hr class="border-slate-800 my-2">
+
+                <div>
+                    <div class="flex justify-between text-xs mb-2">
+                        <label for="stampScaleRange" class="text-slate-300 font-bold">Skala Ukuran Keseluruhan</label>
+                        <span id="stampScaleVal">1.00x</span>
+                    </div>
+                    <input type="range" id="stampScaleRange" min="0.6" max="1.8" step="0.05" value="1">
+                </div>
+            </section>
+
+            <button id="downloadBtn" type="button" disabled
+                class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-4 rounded-sm tracking-wide transition shadow-lg">
+                UNDUH FOTO
+            </button>
+
+            <button id="resetBtn" type="button"
+                class="w-full bg-slate-900/80 hover:bg-slate-800 text-white font-bold py-3 rounded-sm border border-slate-700">
+                RESET PENGATURAN
+            </button>
+        </aside>
+
+        <section class="min-w-0">
+            <div class="bg-slate-950/70 border border-white/10 rounded-md overflow-hidden">
+                <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10">
+                    <div>
+                        <h3 class="text-sm font-bold">LIVE PREVIEW</h3>
+                        <p class="text-[10px] text-slate-400 mt-1">Pratinjau hasil stempel</p>
+                    </div>
+                    <span id="imageInfo" class="text-[10px] text-slate-400">Belum ada foto</span>
+                </div>
+
+                <div id="previewArea">
+                    <div id="placeholderText" class="text-center max-w-xs">
+                        <div class="text-5xl text-slate-600 mb-4">+</div>
+                        <p class="text-sm font-semibold text-slate-300">Belum ada foto</p>
+                        <p class="text-xs text-slate-500 mt-2">
+                            Unggah foto untuk mulai mengedit stempel Template 2.
+                        </p>
+                    </div>
+                    <canvas id="photoCanvas" class="hidden"></canvas>
+                </div>
+
+                <div class="px-4 py-3 border-t border-white/10 flex items-center justify-between text-[10px] text-slate-400 gap-3">
+                    <span>TIMEMARK STUDIO</span>
+                    <span>JPEG HIGH QUALITY</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="panel-card p-4">
+                    <p class="text-[10px] tracking-wider text-slate-400">FORMAT OUTPUT</p>
+                    <p class="font-bold text-sm mt-1">JPEG JPG</p>
+                </div>
+                <div class="panel-card p-4">
+                    <p class="text-[10px] tracking-wider text-slate-400">KUALITAS FOTO</p>
+                    <p class="font-bold text-sm mt-1">95% JPEG</p>
+                </div>
+            </div>
+
+            <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+                Catatan: logo, label, dan kode pada editor ini merupakan elemen visual buatan aplikasi, bukan bukti verifikasi resmi TimeMark.
+            </p>
+        </section>
+    </div>
+</main>
+
+<script>
+'use strict';
+
+const getEl = id => document.getElementById(id);
+
+const imageInput = getEl('imageInput');
+const canvas = getEl('photoCanvas');
+const ctx = canvas.getContext('2d');
+const placeholderText = getEl('placeholderText');
+const downloadBtn = getEl('downloadBtn');
+const imageInfo = getEl('imageInfo');
+
+let uploadedImage = null;
+
+const controlIds = [
+    'inputBadgeTitle',
+    'inputDate',
+    'inputDay',
+    'inputTime',
+    'inputLocation1',
+    'inputLocation2',
+    'inputLocation3',
+    'inputCoord',
+    'logoColor',
+    'fontFamilyDate',
+    'fontFamilyAddress',
+    'fontSizeTime',
+    'fontSizeDate',
+    'fontSizeAddress',
+    'subTextOpacity',
+    'boxRadius',
+    'boxPaddingX',
+    'boxPaddingY',
+    'showSideCode',
+    'showLogo',
+    'showBadge',
+    'showBottomCode',
+    'showDetails',
+    'offsetGlobalY',
+    'offsetXBox',
+    'offsetYBox',
+    'offsetYDate',
+    'offsetYAddress',
+    'offsetYBottomCode',
+    'offsetXLine',
+    'lineLengthOffset',
+    'stampScaleRange'
+];
+
+const defaults = {
+    inputBadgeTitle: 'Absensi',
+    inputDate: '03 April 2026',
+    inputDay: 'Jumat',
+    inputTime: '14:34',
+    inputLocation1: 'Jalan Raya Desa, Bungko, Kec.',
+    inputLocation2: 'Kotamobagu Sel., Kota Kotamobagu,',
+    inputLocation3: 'Sulawesi Utara',
+    inputCoord: 'G6C6GB1GPDUE6K',
+    logoColor: 'dual',
+    fontFamilyDate: 'Arial, sans-serif',
+    fontFamilyAddress: 'Arial, sans-serif',
+    fontSizeTime: '38',
+    fontSizeDate: '20',
+    fontSizeAddress: '18',
+    subTextOpacity: '0.25',
+    boxRadius: '9',
+    boxPaddingX: '4',
+    boxPaddingY: '2',
+    showSideCode: true,
+    showLogo: true,
+    showBadge: true,
+    showBottomCode: true,
+    showDetails: true,
+    offsetGlobalY: '115',
+    offsetXBox: '0',
+    offsetYBox: '-40',
+    offsetYDate: '40',
+    offsetYAddress: '-30',
+    offsetYBottomCode: '-45',
+    offsetXLine: '-4',
+    lineLengthOffset: '-50',
+    stampScaleRange: '1'
+};
+
+async function waitForFonts() {
+    if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+    }
+}
+
+imageInput.addEventListener('change', event => {
+    const file = event.target.files && event.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        alert('Pilih file gambar yang valid.');
+        imageInput.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onerror = () => alert('File foto gagal dibaca.');
+
+    reader.onload = () => {
+        const image = new Image();
+
+        image.onload = async () => {
+            uploadedImage = image;
+            canvas.classList.remove('hidden');
+            placeholderText.classList.add('hidden');
+            downloadBtn.disabled = false;
+            imageInfo.textContent = image.naturalWidth + ' x ' + image.naturalHeight;
+
+            await waitForFonts();
+            drawCanvas();
+        };
+
+        image.onerror = () => alert('Foto tidak dapat dibuka.');
+        image.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+});
+
+controlIds.forEach(id => {
+    getEl(id).addEventListener('input', () => {
+        updateLabels();
+        drawCanvas();
+    });
+
+    getEl(id).addEventListener('change', () => {
+        updateLabels();
+        drawCanvas();
+    });
+});
+
+function updateLabels() {
+    getEl('fontSizeTimeVal').textContent = getEl('fontSizeTime').value + ' px';
+    getEl('fontSizeDateVal').textContent = getEl('fontSizeDate').value + ' px';
+    getEl('fontSizeAddressVal').textContent = getEl('fontSizeAddress').value + ' px';
+    getEl('subTextOpacityVal').textContent = Number(getEl('subTextOpacity').value).toFixed(2);
+    getEl('boxRadiusVal').textContent = getEl('boxRadius').value + ' px';
+    getEl('boxPaddingXVal').textContent = getEl('boxPaddingX').value + ' px';
+    getEl('boxPaddingYVal').textContent = getEl('boxPaddingY').value + ' px';
+    getEl('offsetGlobalYVal').textContent = getEl('offsetGlobalY').value + ' px';
+    getEl('offsetXBoxVal').textContent = getEl('offsetXBox').value + ' px';
+    getEl('offsetYBoxVal').textContent = getEl('offsetYBox').value + ' px';
+    getEl('offsetYDateVal').textContent = getEl('offsetYDate').value + ' px';
+    getEl('offsetYAddressVal').textContent = getEl('offsetYAddress').value + ' px';
+    getEl('offsetYBottomCodeVal').textContent = getEl('offsetYBottomCode').value + ' px';
+    getEl('offsetXLineVal').textContent = getEl('offsetXLine').value + ' px';
+    getEl('lineLengthOffsetVal').textContent = getEl('lineLengthOffset').value + ' px';
+    getEl('stampScaleVal').textContent = Number(getEl('stampScaleRange').value).toFixed(2) + 'x';
+}
+
+function fitText(text, maxWidth) {
+    text = String(text || '');
+    maxWidth = Math.max(0, maxWidth);
+
+    if (!text || maxWidth <= 0) return '';
+    if (ctx.measureText(text).width <= maxWidth) return text;
+
+    let result = text;
+
+    while (result.length > 0 && ctx.measureText(result + '...').width > maxWidth) {
+        result = result.slice(0, -1);
+    }
+
+    return result ? result + '...' : '';
+}
+
+function roundRect(context, x, y, width, height, radius, fill, stroke) {
+    if (width <= 0 || height <= 0) return;
+
+    const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+
+    context.beginPath();
+    context.moveTo(x + r, y);
+    context.lineTo(x + width - r, y);
+    context.quadraticCurveTo(x + width, y, x + width, y + r);
+    context.lineTo(x + width, y + height - r);
+    context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    context.lineTo(x + r, y + height);
+    context.quadraticCurveTo(x, y + height, x, y + height - r);
+    context.lineTo(x, y + r);
+    context.quadraticCurveTo(x, y, x + r, y);
+    context.closePath();
+
+    if (fill) context.fill();
+    if (stroke) context.stroke();
+}
+
+function drawCanvas() {
+    if (!uploadedImage) return;
+
+    const w = uploadedImage.naturalWidth;
+    const h = uploadedImage.naturalHeight;
+
+    if (!w || !h) return;
+
+    canvas.width = w;
+    canvas.height = h;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(uploadedImage, 0, 0, w, h);
+
+    const userScale = Number(getEl('stampScaleRange').value);
+    const baseScale = Math.max(0.25, Math.min(w / 1200, h / 700));
+    const scale = baseScale * userScale;
+    const margin = Math.max(10, 24 * scale);
+    const rightMargin = w - margin;
+
+    const globalShiftY = Number(getEl('offsetGlobalY').value) * baseScale;
+
+    // 1. LOGO KANAN ATAS
+    if (getEl('showLogo').checked) {
+        ctx.save();
+
+        const logoSize = Math.max(10, 18 * scale);
+        const logoY = margin + logoSize;
+        const logoMode = getEl('logoColor').value;
+        const subOpacity = Number(getEl('subTextOpacity').value);
+        const fontDateText = getEl('fontFamilyDate').value;
+
+        ctx.font = '500 ' + Math.max(7, 12 * scale) + 'px ' + fontDateText;
+        const subText = 'Foto 100% akurat';
+        const subTextWidth = ctx.measureText(subText).width;
+
+        ctx.font = '900 ' + logoSize + 'px ' + fontDateText;
+        let logoTotalWidth = 0;
+        if (logoMode === 'dual') {
+            logoTotalWidth = ctx.measureText('Time').width + ctx.measureText('mark').width;
+        } else {
+            logoTotalWidth = ctx.measureText('Timemark').width;
+        }
+
+        const maxBlockWidth = Math.max(logoTotalWidth, subTextWidth);
+        const alignLeftX = rightMargin - maxBlockWidth;
+
+        if (logoMode === 'dual') {
+            const timeW = ctx.measureText('Time').width;
+            ctx.fillStyle = '#eab308';
+            ctx.textAlign = 'left';
+            ctx.fillText('Time', alignLeftX, logoY);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('mark', alignLeftX + timeW, logoY);
+        } else {
+            ctx.fillStyle = logoMode === 'yellow' ? '#eab308' : '#ffffff';
+            ctx.textAlign = 'left';
+            ctx.fillText('Timemark', alignLeftX, logoY);
+        }
+
+        ctx.font = '500 ' + Math.max(7, 12 * scale) + 'px ' + fontDateText;
+        ctx.fillStyle = 'rgba(255,255,255,' + subOpacity + ')';
+        ctx.textAlign = 'left';
+        ctx.fillText(subText, alignLeftX, logoY + 15 * scale);
+
+        ctx.restore();
+    }
+
+    // 2. TEKS VERTIKAL KANAN
+    if (getEl('showSideCode').checked) {
+        ctx.save();
+
+        ctx.translate(w - Math.max(8, 12 * scale), h / 2);
+        ctx.rotate(-Math.PI / 2);
+
+        ctx.font = Math.max(7, 11 * scale) + 'px ' + getEl('fontFamilyDate').value;
+        ctx.fillStyle = 'rgba(255,255,255,0.78)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const sideText = '66CGB1GPDUE6K Timemark Verified';
+        const sideMaxWidth = Math.max(20, h - margin * 2);
+
+        ctx.fillText(fitText(sideText, sideMaxWidth), 0, 0);
+        ctx.restore();
+    }
+
+    // 3. STEMPEL UTAMA KIRI BAWAH
+    ctx.save();
+    ctx.translate(0, globalShiftY);
+
+    const left = margin;
+    const availableWidth = Math.max(30, w - margin * 2);
+    const contentWidth = Math.max(30, Math.min(availableWidth, w * 0.82));
+    const bottom = h - margin;
+
+    const showBadge = getEl('showBadge').checked;
+    const showDetails = getEl('showDetails').checked;
+    const showBottomCode = getEl('showBottomCode').checked;
+
+    const badgeTitle = getEl('inputBadgeTitle').value.trim();
+    const timeText = getEl('inputTime').value.trim();
+    const dateText = getEl('inputDate').value.trim();
+    const dayText = getEl('inputDay').value.trim();
+    const bottomCodeText = getEl('inputCoord').value.trim();
+
+    const fontDateText = getEl('fontFamilyDate').value;
+    const fontAddressText = getEl('fontFamilyAddress').value;
+
+    const timeSize = Number(getEl('fontSizeTime').value) * baseScale;
+    const badgeSize = Math.max(11, 21 * scale);
+    
+    const dateSize = Number(getEl('fontSizeDate').value) * baseScale;
+    const addressSize = Number(getEl('fontSizeAddress').value) * baseScale;
+    const codeSize = Math.max(9, 15 * scale);
+
+    const lineGap = Math.max(3, 5 * scale);
+    let cursorY = bottom;
+
+    const boxShiftX = Number(getEl('offsetXBox').value) * baseScale;
+    const boxShiftY = Number(getEl('offsetYBox').value) * baseScale;
+    const dateShiftY = Number(getEl('offsetYDate').value) * baseScale;
+    const addressShiftY = Number(getEl('offsetYAddress').value) * baseScale;
+    const bottomCodeShiftY = Number(getEl('offsetYBottomCode').value) * baseScale;
+    const lineShiftX = Number(getEl('offsetXLine').value) * baseScale;
+    const lineLengthExtra = Number(getEl('lineLengthOffset').value) * baseScale;
+
+    // KODE BAWAH
+    let pillTopY = bottom;
+    if (showBottomCode && bottomCodeText) {
+        ctx.save();
+
+        ctx.font = '500 ' + codeSize + 'px ' + fontDateText;
+
+        const codeLabel = 'Kode Foto: ' + bottomCodeText;
+        const padX = Math.max(7, 11 * scale);
+        const padY = Math.max(5, 7 * scale);
+
+        const codeDisplay = fitText(codeLabel, contentWidth - padX * 2);
+
+        const pillWidth = Math.min(
+            contentWidth,
+            ctx.measureText(codeDisplay).width + padX * 2
+        );
+
+        const pillHeight = codeSize + padY * 2;
+        const pillX = left;
+        pillTopY = cursorY - pillHeight + bottomCodeShiftY;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.72)';
+
+        roundRect(
+            ctx, pillX, pillTopY, pillWidth, pillHeight,
+            Math.max(2, 4 * scale), true, false
+        );
+
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(codeDisplay, pillX + padX, pillTopY + pillHeight / 2);
+
+        cursorY = pillTopY - lineGap * 2;
+        ctx.restore();
+    } else {
+        pillTopY = bottom;
+    }
+
+    // ALAMAT MAKSIMAL TIGA BARIS
+    const addressLines = showDetails
+        ? [
+            getEl('inputLocation1').value.trim(),
+            getEl('inputLocation2').value.trim(),
+            getEl('inputLocation3').value.trim()
+        ].filter(Boolean)
+        : [];
+
+    let addressTopY = cursorY;
+    if (addressLines.length) {
+        ctx.save();
+
+        ctx.font = '400 ' + addressSize + 'px ' + fontAddressText;
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+
+        for (let i = addressLines.length - 1; i >= 0; i--) {
+            addressTopY = cursorY - addressSize * 1.35 + addressShiftY;
+            ctx.fillText(fitText(addressLines[i], contentWidth), left, addressTopY + (addressSize * 1.35 * (addressLines.length - 1 - i)));
+            cursorY = addressTopY;
+        }
+
+        cursorY -= lineGap;
+        ctx.restore();
+    }
+
+    // TANGGAL DAN HARI
+    const fullDate = [dayText, dateText].filter(Boolean).join(', ');
+    let dateTopY = cursorY;
+
+    if (showDetails && fullDate) {
+        ctx.save();
+
+        ctx.font = '700 ' + dateSize + 'px ' + fontDateText;
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        
+        dateTopY = cursorY - dateSize * 1.45 + dateShiftY;
+        ctx.fillText(fitText(fullDate, contentWidth), left, dateTopY);
+
+        cursorY = dateTopY;
+        ctx.restore();
+    }
+
+    // KOTAK JAM DAN LABEL (TEKS JAM KETEBALAN 600 DAN DISELARASKAN PAS)
+    let boxTopY = cursorY;
+    let boxLeftX = left;
+    let boxTotalHeight = 0;
+
+    if (timeText || (showBadge && badgeTitle)) {
+        ctx.save();
+
+        const innerPadX = Math.max(2, Number(getEl('boxPaddingX').value) * scale);
+        const innerPadY = Math.max(2, Number(getEl('boxPaddingY').value) * scale);
+        const currentBoxRadius = Number(getEl('boxRadius').value) * scale;
+        const gap = Math.max(4, 7 * scale);
+
+        let actualTimeSize = timeSize;
+        let fittedTime = '';
+
+        if (timeText) {
+            ctx.font = '600 ' + actualTimeSize + 'px ' + fontDateText;
+
+            const availableTimeWidth = Math.max(
+                20,
+                contentWidth * (showBadge && badgeTitle ? 0.68 : 0.94)
+            );
+
+            while (
+                actualTimeSize > 10 &&
+                ctx.measureText(timeText).width > availableTimeWidth
+            ) {
+                actualTimeSize *= 0.92;
+                ctx.font = '600 ' + actualTimeSize + 'px ' + fontDateText;
+            }
+
+            fittedTime = fitText(timeText, availableTimeWidth);
+            ctx.font = '600 ' + actualTimeSize + 'px ' + fontDateText;
+        }
+
+        const measuredTimeWidth = timeText
+            ? ctx.measureText(fittedTime).width
+            : 0;
+
+        let fittedBadge = '';
+        let actualBadgeWidth = 0;
+        const hasBadge = showBadge && !!badgeTitle;
+
+        if (hasBadge) {
+            ctx.font = '800 ' + badgeSize + 'px ' + fontDateText;
+
+            const badgeAvailableWidth = Math.max(
+                20,
+                contentWidth -
+                measuredTimeWidth -
+                innerPadX * 2 -
+                gap * 2
+            );
+
+            fittedBadge = fitText(
+                badgeTitle,
+                Math.max(10, badgeAvailableWidth - innerPadX)
+            );
+
+            actualBadgeWidth =
+                ctx.measureText(fittedBadge).width + innerPadX * 1.6;
+        }
+
+        const badgeTimeGap = hasBadge && timeText ? gap : 0;
+
+        const contentHeight = Math.max(
+            timeText ? actualTimeSize : 0,
+            hasBadge ? badgeSize * 1.65 : 0,
+            12
+        );
+
+        const boxWidth = Math.min(
+            contentWidth,
+            innerPadX * 2 +
+            actualBadgeWidth +
+            badgeTimeGap +
+            measuredTimeWidth
+        );
+
+        boxTotalHeight = contentHeight + innerPadY * 2;
+        boxLeftX = left + boxShiftX;
+        boxTopY = cursorY - boxTotalHeight + boxShiftY;
+
+        ctx.fillStyle = '#ffffff';
+
+        roundRect(
+            ctx, boxLeftX, boxTopY, boxWidth, boxTotalHeight,
+            currentBoxRadius, true, false
+        );
+
+        let textX = boxLeftX + innerPadX;
+        const centerY = boxTopY + boxTotalHeight / 2;
+
+        if (hasBadge && fittedBadge) {
+            ctx.font = '800 ' + badgeSize + 'px ' + fontDateText;
+
+            const badgeW = Math.min(
+                actualBadgeWidth,
+                Math.max(0, boxWidth - innerPadX * 2)
+            );
+
+            const badgeH = Math.min(badgeSize * 1.65, boxTotalHeight - 4);
+            const badgeX = textX;
+            const badgeY = centerY - badgeH / 2;
+
+            ctx.fillStyle = '#eab308';
+
+            roundRect(
+                ctx, badgeX, badgeY, badgeW, badgeH,
+                Math.max(1, 3 * scale), true, false
+            );
+
+            ctx.fillStyle = '#111111';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            ctx.fillText(
+                fittedBadge,
+                badgeX + badgeW / 2,
+                centerY,
+                Math.max(1, badgeW - 4)
+            );
+
+            textX += badgeW + badgeTimeGap;
+        }
+
+        if (timeText) {
+            ctx.font = '600 ' + actualTimeSize + 'px ' + fontDateText;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+
+            const gradientTop = centerY - actualTimeSize * 0.55;
+            const gradientBottom = centerY + actualTimeSize * 0.55;
+
+            const gradientJam = ctx.createLinearGradient(
+                0,
+                gradientTop,
+                0,
+                gradientBottom
+            );
+
+            gradientJam.addColorStop(0.00, '#318BFF');
+            gradientJam.addColorStop(0.18, '#18569A');
+            gradientJam.addColorStop(0.35, '#092B4D');
+            gradientJam.addColorStop(0.55, '#03070C');
+            gradientJam.addColorStop(1.00, '#000000');
+
+            ctx.fillStyle = gradientJam;
+
+            ctx.fillText(
+                fittedTime,
+                textX,
+                centerY + 0.5,
+                Math.max(1, boxLeftX + boxWidth - innerPadX - textX)
+            );
+        }
+
+        ctx.restore();
+    }
+
+    // GARIS KUNING EMAS VERTIKAL
+    if (showDetails && fullDate) {
+        ctx.save();
+
+        const accentX = left - Math.max(4, 7 * scale) + lineShiftX;
+        const lineStartY = dateTopY - dateSize * 0.85;
+        const defaultLineEndY = showBottomCode && bottomCodeText ? pillTopY - 4 : bottom;
+        const lineEndY = defaultLineEndY + lineLengthExtra;
+        const accentHeight = Math.max(10, lineEndY - lineStartY);
+
+        ctx.strokeStyle = '#eab308';
+        ctx.lineWidth = Math.max(2, 4 * scale);
+        ctx.lineCap = 'butt';
+
+        ctx.beginPath();
+        ctx.moveTo(accentX, lineStartY);
+        ctx.lineTo(accentX, lineStartY + accentHeight);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    ctx.restore();
+}
+
+downloadBtn.addEventListener('click', () => {
+    if (!uploadedImage) return;
+
+    try {
+        canvas.toBlob(blob => {
+            if (!blob) {
+                alert('Foto gagal diproses. Silakan coba lagi.');
+                return;
+            }
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = 'timemark-studio-template-2-result.jpg';
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+        }, 'image/jpeg', 0.95);
+    } catch (error) {
+        console.error(error);
+        alert('Foto gagal diunduh.');
+    }
+});
+
+getEl('resetBtn').addEventListener('click', () => {
+    for (const [id, value] of Object.entries(defaults)) {
+        const element = getEl(id);
+        if (!element) continue;
+
+        if (element.type === 'checkbox') {
+            element.checked = Boolean(value);
+        } else {
+            element.value = value;
+        }
+    }
+
+    updateLabels();
+    drawCanvas();
+});
+
+updateLabels();
+</script>
+
+</body>
+</html>
